@@ -1,0 +1,6 @@
+.git
+.gitignore
+deployments
+setup-cluster.sh
+LICENSE
+k7s/Dockerfile
