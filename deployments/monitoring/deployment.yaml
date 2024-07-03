@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: monitoring-server
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: monitoring-server
+  template:
+    metadata:
+      labels:
+        app: monitoring-server
+    spec:
+      containers:
+        - name: monitoring-server
+          image: adibov/k7s:monitoring
+          env:
+            - name: SLAVE_DB_HOST
+              value: "postgres-slave"
+            - name: SLAVE_DB_PORT
+              value: "5432"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: username
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret
+                  key: password
+            - name: DB_NAME
+              value: "postgres"
+          ports:
+            - containerPort: 5000

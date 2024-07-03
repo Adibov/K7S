@@ -1,0 +1,59 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: health-monitor
+spec:
+  schedule: "*/5 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app: health-monitor
+        spec:
+          containers:
+            - name: health-monitor
+              image: ubuntu:20.04
+              env:
+                - name: DB_HOST
+                  valueFrom:
+                    configMapKeyRef:
+                      name: monitor-config
+                      key: db_host
+                - name: DB_PORT
+                  valueFrom:
+                    configMapKeyRef:
+                      name: monitor-config
+                      key: db_port
+                - name: DB_USER
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-secret
+                      key: username
+                - name: DB_PASSWORD
+                  valueFrom:
+                    secretKeyRef:
+                      name: postgres-secret
+                      key: password
+              command: ["/bin/sh", "-c"]
+              args:
+                - |
+                  apt-get update && apt-get install -y curl postgresql-client  
+                  curl -LO https://dl.k8s.io/release/v1.15.12/bin/linux/arm64/kubectl && install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl && kubectl version --client
+                  while true; do
+                    for pod in $(kubectl get pods -l monitor=true -o jsonpath='{.items[*].metadata.name}'); do
+                      app_name=$(kubectl get pod $pod -o jsonpath='{.metadata.labels.app}')
+                      response=$(curl -s -o /dev/null -w "%{http_code}" http://$pod:8080/healthz)
+                      if [ $response -ne 200 ]; then
+                        # Failure logic
+                        echo "Failure detected"
+                        psql "host=$DB_HOST port=$DB_PORT user=$DB_USER password=$DB_PASSWORD dbname=postgres" -c "UPDATE health_checks SET failure_count = failure_count + 1, last_failure = NOW() WHERE app_name = '$app_name';"
+                      else
+                        # Success logic
+                        echo "Service is healthy"
+                        psql "host=$DB_HOST port=$DB_PORT user=$DB_USER password=$DB_PASSWORD dbname=postgres" -c "UPDATE health_checks SET success_count = success_count + 1, last_success = NOW() WHERE app_name = '$app_name';"
+                      fi
+                    done
+                    sleep 5
+                  done
+          restartPolicy: OnFailure
