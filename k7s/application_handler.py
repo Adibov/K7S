@@ -1,12 +1,11 @@
 import base64
 
-from flask import request, jsonify
+from flask import jsonify
 from kubernetes import config, client
 from kubernetes.client import ApiException
 
 from kubernetes_commands import create_or_replace_secret, create_or_replace_deployment, create_or_replace_service, \
     create_or_replace_ingress
-from main import app, blueprint
 
 
 def deploy_application(app_name, replicas, image_address, image_tag, domain_address, service_port, resources, envs,
@@ -51,7 +50,6 @@ def deploy_application(app_name, replicas, image_address, image_tag, domain_addr
                 raise
 
 
-# @app.route('/deploy-application', methods=['POST'])
 def deploy(request):
     data = request.get_json()
 

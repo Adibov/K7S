@@ -1,11 +1,8 @@
-from flask import request, jsonify
+from flask import jsonify
 from kubernetes import config, client
 from kubernetes.client import ApiException
 
-from main import app, blueprint
 
-
-# @app.route('/deployment-status', methods=['GET'])
 def get_status(request):
     deployment_name = request.args.get('name')
     namespace = 'default'
@@ -45,7 +42,6 @@ def get_status(request):
     return jsonify(response), 200
 
 
-# @app.route('/deployment-statuses', methods=['GET'])
 def get_all_statuses(request):
     namespace = 'default'
 

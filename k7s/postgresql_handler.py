@@ -2,13 +2,11 @@ import base64
 import random
 import string
 
-from flask import request, jsonify
+from flask import jsonify
 from kubernetes import config, client
 from kubernetes.client import ApiException
 
-from k7s.main import blueprint
 from kubernetes_commands import create_or_replace_secret, create_or_replace_configmap, create_or_replace_service
-from flask import current_app as app
 
 
 def deploy_postgresql(app_name, resources, external_access, namespace='default'):
@@ -69,17 +67,6 @@ def deploy_postgresql(app_name, resources, external_access, namespace='default')
         replicas=1,
         selector={'matchLabels': {"app": app_name}},
         template=template,
-        # volume_claim_templates=[
-        #     client.V1PersistentVolumeClaim(
-        #         metadata=client.V1ObjectMeta(name='data'),
-        #         spec=client.V1PersistentVolumeClaimSpec(
-        #             access_modes=['ReadWriteOnce'],
-        #             resources=client.V1ResourceRequirements(
-        #                 requests={'storage': '1Gi'}
-        #             )
-        #         )
-        #     )
-        # ]
     )
 
     statefulset = client.V1StatefulSet(
@@ -100,29 +87,8 @@ def deploy_postgresql(app_name, resources, external_access, namespace='default')
             raise
 
     create_or_replace_service(app_name, namespace, 5432)
-    # Create Service
-    # service_body = client.V1Service(
-    #     api_version="v1",
-    #     kind="Service",
-    #     metadata=client.V1ObjectMeta(name=app_name),
-    #     spec=client.V1ServiceSpec(
-    #         selector={"app": app_name},
-    #         ports=[client.V1ServicePort(port=5432, target_port=5432)],
-    #         type="LoadBalancer" if external_access else "ClusterIP"
-    #     )
-    # )
-    #
-    # try:
-    #     core_v1_api.create_namespaced_service(namespace, service_body)
-    #     print(f"Service {app_name} created successfully.")
-    # except ApiException as e:
-    #     if e.status == 409:
-    #         print(f"Service {app_name} already exists.")
-    #     else:
-    #         raise
 
 
-# @app.route('/deploy-postgres', methods=['POST'])
 def deploy_postgres(request):
     data = request.get_json()
 
