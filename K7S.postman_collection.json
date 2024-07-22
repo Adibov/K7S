@@ -1,0 +1,165 @@
+{
+	"info": {
+		"_postman_id": "17faa739-18c8-4399-b820-bca5219a475a",
+		"name": "K7S",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17118536"
+	},
+	"item": [
+		{
+			"name": "Create Application",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"AppName\": \"MyApp\",\n    \"Replicas\": 3,\n    \"ImageAddress\": \"hashicorp/http-echo\",\n    \"ImageTag\": \"latest\",\n    \"DomainAddress\": \"myapp.example.local\",\n    \"ServicePort\": 5678,\n    \"Resources\": {\n        \"CPU\": \"500m\",\n        \"RAM\": \"1Gi\"\n    },\n    \"Envs\": [\n        {\n            \"Key\": \"DATABASE_URL\",\n            \"Value\": \"postgres://user:password@db.example.com:5432/mydb\",\n            \"IsSecret\": \"True\"\n        },\n        {\n            \"Key\": \"REDIS_HOST\",\n            \"Value\": \"redis.example.com\",\n            \"IsSecret\": \"False\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/deploy-application",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"deploy-application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create PostgreSQL",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"AppName\": \"MyApp\",\n    \"Replicas\": 3,\n    \"ImageAddress\": \"hashicorp/http-echo\",\n    \"ImageTag\": \"latest\",\n    \"DomainAddress\": \"myapp.example.local\",\n    \"ServicePort\": 5678,\n    \"Resources\": {\n        \"CPU\": \"500m\",\n        \"RAM\": \"1Gi\"\n    },\n    \"Envs\": [\n        {\n            \"Key\": \"DATABASE_URL\",\n            \"Value\": \"postgres://user:password@db.example.com:5432/mydb\",\n            \"IsSecret\": \"True\"\n        },\n        {\n            \"Key\": \"REDIS_HOST\",\n            \"Value\": \"redis.example.com\",\n            \"IsSecret\": \"False\"\n        }\n    ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/deploy-application",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"deploy-application"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Deployment Status",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/deployment-status?name=myapp",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"deployment-status"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "myapp"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Deployment Statuses",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/deployment-statuses",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"deployment-statuses"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get All Deployment Statuses Copy",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/deployment-statuses",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"deployment-statuses"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
